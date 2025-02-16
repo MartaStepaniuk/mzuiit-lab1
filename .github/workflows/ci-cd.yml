@@ -3,7 +3,7 @@ name: Docker Build and Deploy
 on:
   push:
     branches:
-      - main
+      - lab1
 
 jobs:
   build:
@@ -18,8 +18,8 @@ jobs:
 
       - name: Stop and remove existing container
         run: |
-          sudo docker stop group3 || true   # Якщо контейнер не знайдений, не викликає помилок
-          sudo docker rm group3 || true     # Те ж саме для видалення
+          sudo docker stop group3 || true
+          sudo docker rm group3 || true
 
       - name: Build the Docker image
         run: |
