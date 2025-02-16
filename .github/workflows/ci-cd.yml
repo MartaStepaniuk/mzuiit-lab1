@@ -1,23 +1,30 @@
-name: Deploy to Docker Hub
+name: Docker Build and Deploy
 
 on:
   push:
     branches:
-      - lab1
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build Docker image
-        run: docker build -t martastepaniuk/group3:latest .
+      - name: Stop and remove existing container
+        run: |
+          sudo docker stop group3 || true   # Якщо контейнер не знайдений, не викликає помилок
+          sudo docker rm group3 || true     # Те ж саме для видалення
 
-      - name: Push to Docker Hub
-        run: docker push martastepaniuk/group3:latest
+      - name: Build the Docker image
+        run: |
+          sudo docker build -t group3 .
 
+      - name: Run the Docker container
+        run: |
+          sudo docker run -d --name group3 -p 80:80 group3
